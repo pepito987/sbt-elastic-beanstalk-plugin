@@ -20,8 +20,8 @@ trait ElasticBeanstalkKeys {
   lazy val awsRegion = settingKey[Regions]("Region for the elastic beanstalk application and S3 bucket")
   lazy val awsEbextensionsDir = settingKey[File]("Directory containing *.config files for advanced elastic beanstalk environment customisation. It's fine for this directory not to exist.")
   lazy val awsStage = taskKey[File]("Creates the Dockerrun.aws.json file")
-  lazy val awsPublish = taskKey[Option[CreateApplicationVersionResult]]("Publishes the docker configuration to S3")
-  lazy val awsS3PublishWithLatest = taskKey[Option[PutObjectResult]]("Publishes the docker configuration to S3")
+  lazy val awsPublish = taskKey[Option[CreateApplicationVersionResult]]("Publishes the docker configuration to S3 and create a beanstalk application version")
+  lazy val awsS3UploadWithLatest = taskKey[Option[PutObjectResult]]("Upload the docker configuration to S3 without creating an application version")
 }
 
 object ElasticBeanstalkPlugin extends AutoPlugin with NativePackagerKeys with DockerKeys with ElasticBeanstalkKeys {
@@ -89,7 +89,7 @@ object ElasticBeanstalkPlugin extends AutoPlugin with NativePackagerKeys with Do
       }
     },
 
-    awsS3PublishWithLatest := {
+    awsS3UploadWithLatest := {
       val key = s"${packageName.value}/${version.value}.zip"
       val keyLastest = s"${packageName.value}/latest.zip"
 
